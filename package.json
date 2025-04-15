@@ -11,12 +11,36 @@
       "name": "search-pages",
       "title": "Search Pages",
       "description": "",
-      "mode": "view"
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "confluenceDomain",
+          "title": "Confluence Domain",
+          "required": true,
+          "description": "The domain of your Confluence instance",
+          "type": "textfield"
+        },
+        {
+          "name": "confluenceEmail",
+          "title": "Confluence Email",
+          "required": true,
+          "description": "Your email address for Confluence",
+          "type": "textfield"
+        },
+        {
+          "name": "confluenceApiToken",
+          "title": "Confluence API Token",
+          "required": true,
+          "description": "Your API token for Confluence",
+          "type": "textfield"
+        } 
+      ]
     }
   ],
   "dependencies": {
     "@raycast/api": "^1.95.0",
-    "@raycast/utils": "^1.17.0"
+    "@raycast/utils": "^1.17.0",
+    "axios": "^1.8.4"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^2.0.4",
