@@ -36,7 +36,7 @@
       "title": "Confluence API Token",
       "required": true,
       "description": "Your API token for Confluence",
-      "type": "textfield"
+      "type": "password"
     } 
   ],
   "dependencies": {
