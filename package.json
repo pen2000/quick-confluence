@@ -1,9 +1,9 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "quickconfluence",
+  "name": "quick-confluence",
   "title": "QuickConfluence",
   "description": "",
-  "icon": "extension-icon.png",
+  "icon": "icon.png",
   "author": "pen2000",
   "license": "MIT",
   "commands": [
@@ -11,31 +11,33 @@
       "name": "search-pages",
       "title": "Search Pages",
       "description": "",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "confluenceDomain",
-          "title": "Confluence Domain",
-          "required": true,
-          "description": "The domain of your Confluence instance",
-          "type": "textfield"
-        },
-        {
-          "name": "confluenceEmail",
-          "title": "Confluence Email",
-          "required": true,
-          "description": "Your email address for Confluence",
-          "type": "textfield"
-        },
-        {
-          "name": "confluenceApiToken",
-          "title": "Confluence API Token",
-          "required": true,
-          "description": "Your API token for Confluence",
-          "type": "textfield"
-        } 
-      ]
+      "mode": "view"
     }
+  ],
+  "preferences": [
+    {
+      "name": "confluenceDomain",
+      "title": "Confluence Domain",
+      "required": true,
+      "description": "The domain of your Confluence instance",
+      "type": "textfield",
+      "placeholder": "hogehoge.atlassian.net"
+    },
+    {
+      "name": "confluenceEmail",
+      "title": "Confluence Email",
+      "required": true,
+      "description": "Your email address for Confluence",
+      "type": "textfield",
+      "placeholder": "hogehoge@example.com"
+    },
+    {
+      "name": "confluenceApiToken",
+      "title": "Confluence API Token",
+      "required": true,
+      "description": "Your API token for Confluence",
+      "type": "textfield"
+    } 
   ],
   "dependencies": {
     "@raycast/api": "^1.95.0",
