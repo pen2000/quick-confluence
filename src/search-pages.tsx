@@ -1,8 +1,14 @@
-import { ActionPanel, Action, List, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, List, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { searchPages, getSpaces } from "./api";
 import { ConfluencePage, ConfluenceSpace } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
+
+interface Preferences {
+  confluenceEmail: string;
+  confluenceApiToken: string;
+  confluenceDomain: string;
+}
 
 export default function Command() {
   const [searchText, setSearchText] = useState("");
@@ -11,6 +17,7 @@ export default function Command() {
   const [selectedSpace, setSelectedSpace] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [cursor, setCursor] = useState<string | undefined>();
+  const preferences = getPreferenceValues<Preferences>();
 
   // 検索値をデバウンス（400ms）
   const debouncedSearchText = useDebounce(searchText, 400);
@@ -50,7 +57,7 @@ export default function Command() {
         const response = await searchPages(debouncedSearchText, selectedSpace || undefined, cursor);
         // 重複を防ぐために、既存のページIDをチェック
         const newPages = response.results.filter(
-          (page) => !pages.some((existingPage) => existingPage.content?.id === page.content?.id)
+          (page) => !pages.some((existingPage) => existingPage.content.id === page.content.id)
         );
         setPages((prev) => [...prev, ...newPages]);
         setCursor(response._links.next);
@@ -89,24 +96,25 @@ export default function Command() {
         if (id && cursor) {
           // Load more when reaching the end of the list
           const lastItem = pages[pages.length - 1];
-          if (lastItem && lastItem.content?.id === id) {
+          if (lastItem && lastItem.content.id === id) {
             // Trigger next page load
           }
         }
       }}
     >
-      {pages.map((page, index) => (
+      {pages.map((page) => (
         <List.Item
-          key={`${page.content?.id || index}-${page.space?.key || "unknown"}`}
+          key={page.content.id}
           title={page.title}
-          subtitle={page.space?.name}
+          subtitle={page.excerpt}
           accessories={[
-            { text: page.content?.status },
-            { text: page.friendlyLastModified },
+            { tag: { value: page.space?.name || "No space" } },
+            { text: page.user?.username || "No user" },
+            { date: new Date(page.lastModified) },
           ]}
           actions={
             <ActionPanel>
-              <Action.OpenInBrowser url={page.url} />
+              <Action.OpenInBrowser url={`https://${preferences.confluenceDomain}/wiki${page.url}`} />
               <Action.CopyToClipboard content={page.title} />
             </ActionPanel>
           }

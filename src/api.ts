@@ -26,6 +26,7 @@ export async function searchPages(
   const cql = cqlParams.join(" AND ");
   params.append("cql", cql);
   params.append("limit", PAGES_LIST_LIMIT.toString());
+  params.append("excerpt", "indexed");
   if (cursor) {
     params.append("cursor", cursor);
   }
@@ -39,7 +40,6 @@ export async function searchPages(
           `${preferences.confluenceEmail}:${preferences.confluenceApiToken}`,
         ).toString("base64")}`,
         Accept: "application/json",
-        "Content-Type": "application/json; charset=utf-8",
       },
     }
   );
@@ -64,10 +64,7 @@ export async function getSpaces(cursor?: string): Promise<ConfluenceSpacesRespon
         Authorization: `Basic ${Buffer.from(
           `${preferences.confluenceEmail}:${preferences.confluenceApiToken}`,
         ).toString("base64")}`,
-        "Content-Type": "application/json; charset=utf-8",
       },
-      responseType: "json",
-      responseEncoding: "utf8",
     }
   );
 
