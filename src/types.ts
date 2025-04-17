@@ -1,3 +1,9 @@
+export interface Preferences {
+  confluenceEmail: string;
+  confluenceApiToken: string;
+  confluenceDomain: string;
+}
+
 export interface ConfluencePage {
   content: {
     id: string;
@@ -83,6 +89,10 @@ export interface ConfluencePage {
   lastModified: string;
   friendlyLastModified: string;
   score: number;
+  _links: {
+    next?: string;
+    prev?: string;
+  };
 }
 
 export interface ConfluenceSpace {
@@ -113,4 +123,4 @@ export interface ConfluenceSpacesResponse {
   _links: {
     next?: string;
   };
-} 
+}

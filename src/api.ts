@@ -1,14 +1,8 @@
 import axios from "axios";
 import { getPreferenceValues } from "@raycast/api";
-import { ConfluenceSearchResponse, ConfluenceSpacesResponse } from "./types";
+import { ConfluenceSearchResponse, ConfluenceSpacesResponse, Preferences } from "./types";
 
-interface Preferences {
-  confluenceEmail: string;
-  confluenceApiToken: string;
-  confluenceDomain: string;
-}
-
-const PAGES_LIST_LIMIT = 20;
+const PAGES_LIST_LIMIT = 25;
 
 export async function searchPages(
   query: string,
@@ -19,7 +13,7 @@ export async function searchPages(
   const params = new URLSearchParams();
   const cqlParams = [];
   cqlParams.push(`text ~ "${query}"`);
-  cqlParams.push(`type = "page"`);
+  cqlParams.push(`type = page`);
   if (spaceKey) {
     cqlParams.push(`space = "${spaceKey}"`);
   }
@@ -41,7 +35,7 @@ export async function searchPages(
         ).toString("base64")}`,
         Accept: "application/json",
       },
-    }
+    },
   );
 
   return response.data;
@@ -65,7 +59,7 @@ export async function getSpaces(cursor?: string): Promise<ConfluenceSpacesRespon
           `${preferences.confluenceEmail}:${preferences.confluenceApiToken}`,
         ).toString("base64")}`,
       },
-    }
+    },
   );
 
   return response.data;
