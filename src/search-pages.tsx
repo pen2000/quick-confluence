@@ -6,7 +6,9 @@ import { useDebounce } from "./hooks/useDebounce";
 import { usePromise } from "@raycast/utils";
 import { replaceHighlightTags, formatDateToJST } from "./utils";
 
-const DEBOUNCE_TIME_MS = 400;
+const SEARCH_DEBOUNCE_TIME_MS = 400;
+const SPACES_LIMIT = 250;
+const SEARCH_PAGES_LIMIT = 25;
 
 export default function Command() {
   const [searchText, setSearchText] = useState("");
@@ -15,13 +17,17 @@ export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
 
   // 検索値をデバウンス
-  const debouncedSearchText = useDebounce(searchText, DEBOUNCE_TIME_MS);
+  const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_TIME_MS);
 
   // 初期表示時にspecesを取得
   useEffect(() => {
     async function fetchSpaces() {
       try {
-        const response = await getSpaces();
+        const response = await getSpaces({
+          type: "global",
+          status: "current",
+          limit: SPACES_LIMIT,
+        });
         setSpaces(response.results);
       } catch (error) {
         showToast({
@@ -41,7 +47,13 @@ export default function Command() {
           return { data: [], hasMore: false };
         }
         try {
-          const response = await searchPages(searchText, spaceKey || undefined, cursor);
+          const response = await searchPages({
+            query: searchText,
+            spaceKey: spaceKey || undefined,
+            cursor: cursor,
+            limit: SEARCH_PAGES_LIMIT,
+            excerpt: "highlight",
+          });
           const nextUrl = response._links.next;
           const cursorMatch = nextUrl?.match(/cursor=([^&]+)/);
           const nextCursor = cursorMatch ? decodeURIComponent(cursorMatch[1]) : undefined;

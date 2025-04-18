@@ -2,8 +2,6 @@ import axios, { AxiosInstance } from "axios";
 import { getPreferenceValues } from "@raycast/api";
 import { ConfluenceSearchResponse, ConfluenceSpacesResponse, Preferences } from "./types";
 
-const PAGES_LIST_LIMIT = 25;
-
 class ConfluenceClient {
   private client: AxiosInstance;
   private preferences: Preferences;
@@ -40,22 +38,37 @@ class ConfluenceClient {
   /**
    * Confluenceのページを検索します。
    * 
-   * @param query - 検索クエリ文字列
-   * @param spaceKey - 検索対象のスペースキー（オプション）
-   * @param cursor - ページネーション用のカーソル（オプション）
+   * @param options - 検索オプション
+   * @param options.query - 検索クエリ文字列
+   * @param options.spaceKey - 検索対象のスペースキー（オプション）
+   * @param options.cursor - ページネーション用のカーソル（オプション）
+   * @param options.limit - 1ページあたりの取得件数（オプション）
+   * @param options.excerpt - 検索結果のハイライト表示設定（オプション）
    * @returns 検索結果を含むConfluenceSearchResponseオブジェクト
    * @throws {Error} APIリクエストが失敗した場合
    */
-  async searchPages(query: string, spaceKey?: string, cursor?: string): Promise<ConfluenceSearchResponse> {
+  async searchPages({
+    query,
+    spaceKey,
+    cursor,
+    limit,
+    excerpt = "highlight",
+  }: {
+    query: string;
+    spaceKey?: string;
+    cursor?: string;
+    limit?: number;
+    excerpt?: string;
+  }): Promise<ConfluenceSearchResponse> {
     const cqlParams = [`text ~ "${query}"`, `type = page`, ...(spaceKey ? [`space = "${spaceKey}"`] : [])];
     const cql = cqlParams.join(" AND ");
-    const limit = PAGES_LIST_LIMIT.toString();
-    const excerpt = "highlight";
     const params = new URLSearchParams({
       cql,
-      limit,
       excerpt,
     });
+    if (limit) {
+      params.append("limit", limit.toString());
+    }
     if (cursor) {
       params.append("cursor", cursor);
     }
@@ -66,16 +79,35 @@ class ConfluenceClient {
   /**
    * Confluenceのスペース一覧を取得します。
    * 
-   * @param cursor - ページネーション用のカーソル（オプション）
+   * @param options - 取得オプション
+   * @param options.cursor - ページネーション用のカーソル（オプション）
+   * @param options.limit - 1ページあたりの取得件数（オプション）
+   * @param options.type - スペースのタイプ（オプション）
+   * @param options.status - スペースのステータス（オプション）
    * @returns スペース一覧を含むConfluenceSpacesResponseオブジェクト
    * @throws {Error} APIリクエストが失敗した場合
    */
-  async getSpaces(cursor?: string): Promise<ConfluenceSpacesResponse> {
-    const params = new URLSearchParams({
-      type: "global",
-      status: "current",
-      limit: "250",
-    });
+  async getSpaces({
+    cursor,
+    limit,
+    type,
+    status,
+  }: {
+    cursor?: string;
+    limit?: number;
+    type?: string;
+    status?: string;
+  } = {}): Promise<ConfluenceSpacesResponse> {
+    const params = new URLSearchParams();
+    if (type) {
+      params.append("type", type);
+    }
+    if (status) {
+      params.append("status", status);
+    }
+    if (limit) {
+      params.append("limit", limit.toString());
+    }
     if (cursor) {
       params.append("cursor", cursor);
     }
