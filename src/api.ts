@@ -52,7 +52,7 @@ class ConfluenceClient {
     spaceKey,
     cursor,
     limit,
-    excerpt = "highlight",
+    excerpt,
   }: {
     query: string;
     spaceKey?: string;
@@ -61,16 +61,18 @@ class ConfluenceClient {
     excerpt?: string;
   }): Promise<ConfluenceSearchResponse> {
     const cqlParams = [`text ~ "${query}"`, `type = page`, ...(spaceKey ? [`space = "${spaceKey}"`] : [])];
-    const cql = cqlParams.join(" AND ");
+    const cql = cqlParams.join(" and ");
     const params = new URLSearchParams({
       cql,
-      excerpt,
     });
     if (limit) {
       params.append("limit", limit.toString());
     }
     if (cursor) {
       params.append("cursor", cursor);
+    }
+    if (excerpt) {
+      params.append("excerpt", excerpt);
     }
 
     return this.request<ConfluenceSearchResponse>("GET", "/rest/api/search", params);
@@ -114,9 +116,45 @@ class ConfluenceClient {
 
     return this.request<ConfluenceSpacesResponse>("GET", "/api/v2/spaces", params);
   }
+
+  /**
+   * お気に入りページを取得します。
+   *
+   * @param options - 取得オプション
+   * @param options.cursor - ページネーション用のカーソル（オプション）
+   * @param options.limit - 1ページあたりの取得件数（オプション）
+   * @returns お気に入りページ一覧を含むConfluenceSearchResponseオブジェクト
+   * @throws {Error} APIリクエストが失敗した場合
+   */
+  async getFavoritePages({
+    cursor,
+    limit,
+    excerpt,
+  }: {
+    cursor?: string;
+    limit?: number;
+    excerpt?: string;
+  } = {}): Promise<ConfluenceSearchResponse> {
+    const cql = "favourite = currentUser() and type = page order by created desc, title";
+    const params = new URLSearchParams({
+      cql,
+    });
+    if (limit) {
+      params.append("limit", limit.toString());
+    }
+    if (cursor) {
+      params.append("cursor", cursor);
+    }
+    if (excerpt) {
+      params.append("excerpt", excerpt);
+    }
+
+    return this.request<ConfluenceSearchResponse>("GET", "/rest/api/search", params);
+  }
 }
 
 const confluenceClient = new ConfluenceClient();
 
 export const searchPages = confluenceClient.searchPages.bind(confluenceClient);
 export const getSpaces = confluenceClient.getSpaces.bind(confluenceClient);
+export const getFavoritePages = confluenceClient.getFavoritePages.bind(confluenceClient);

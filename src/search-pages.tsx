@@ -9,9 +9,9 @@ import { replaceHighlightTags, formatDateToJST, generateConfluenceUrl } from "./
 const SEARCH_DEBOUNCE_TIME_MS = 400;
 
 export default function Command() {
+  const preferences = getPreferenceValues<Preferences>();
   const [searchText, setSearchText] = useState("");
   const [selectedSpace, setSelectedSpace] = useState<string>("");
-  const preferences = getPreferenceValues<Preferences>();
 
   const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_TIME_MS);
   const { data: spaces = [], isLoading: isLoadingSpaces } = useSpaces();

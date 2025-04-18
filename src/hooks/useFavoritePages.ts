@@ -1,24 +1,19 @@
 import { usePromise } from "@raycast/utils";
 import { showToast, Toast } from "@raycast/api";
-import { searchPages } from "../api";
+import { getFavoritePages } from "../api";
 import { getNextCursor } from "../utils";
 
-const SEARCH_PAGES_LIMIT = 25;
+const FAVORITE_PAGES_LIMIT = 25;
 
-export function useSearchPages(searchText: string, spaceKey: string) {
+export function useFavoritePages() {
   return usePromise(
-    (searchText: string, spaceKey: string) =>
-      async ({ cursor }) => {
-        if (!searchText) {
-          return { data: [], hasMore: false };
-        }
+    () =>
+      async ({ cursor }: { cursor?: string }) => {
         try {
-          const response = await searchPages({
-            query: searchText,
-            spaceKey: spaceKey || undefined,
+          const response = await getFavoritePages({
             cursor: cursor,
-            limit: SEARCH_PAGES_LIMIT,
-            excerpt: "highlight",
+            limit: FAVORITE_PAGES_LIMIT,
+            excerpt: "none",
           });
           const nextCursor = getNextCursor(response._links.next);
           return {
@@ -28,13 +23,13 @@ export function useSearchPages(searchText: string, spaceKey: string) {
           };
         } catch (error) {
           showToast({
-            title: "ページの検索に失敗しました",
+            title: "お気に入りページの取得に失敗しました",
             message: error instanceof Error ? error.message : "不明なエラーが発生しました",
             style: Toast.Style.Failure,
           });
           return { data: [], hasMore: false };
         }
       },
-    [searchText, spaceKey],
+    [],
   );
 }
