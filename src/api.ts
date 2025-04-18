@@ -10,7 +10,6 @@ export async function searchPages(
   cursor?: string,
 ): Promise<ConfluenceSearchResponse> {
   const preferences = getPreferenceValues<Preferences>();
-  const params = new URLSearchParams();
   const cqlParams = [];
   cqlParams.push(`text ~ "${query}"`);
   cqlParams.push(`type = page`);
@@ -18,9 +17,11 @@ export async function searchPages(
     cqlParams.push(`space = "${spaceKey}"`);
   }
   const cql = cqlParams.join(" AND ");
-  params.append("cql", cql);
-  params.append("limit", PAGES_LIST_LIMIT.toString());
-  params.append("excerpt", "indexed");
+  const params = new URLSearchParams({
+    cql,
+    limit: PAGES_LIST_LIMIT.toString(),
+    excerpt: "highlight",
+  });
   if (cursor) {
     params.append("cursor", cursor);
   }
@@ -44,6 +45,8 @@ export async function searchPages(
 export async function getSpaces(cursor?: string): Promise<ConfluenceSpacesResponse> {
   const preferences = getPreferenceValues<Preferences>();
   const params = new URLSearchParams({
+    type: "global",
+    status: "current",
     limit: "250",
   });
   if (cursor) {

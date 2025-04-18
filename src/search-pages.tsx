@@ -75,21 +75,28 @@ export default function Command() {
         </List.Dropdown>
       }
       pagination={pagination}
+      isShowingDetail
     >
       {data?.map((page, index) => (
         <List.Item
           key={`${page.content.id}-${index}`}
-          title={page.title}
-          subtitle={page.excerpt}
-          accessories={[
-            { tag: { value: page.space?.name || "No space" } },
-            { text: page.user?.username || "No user" },
-            { date: new Date(page.lastModified) },
-          ]}
+          title={page.title.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, "$1")}
+          detail={
+            <List.Item.Detail
+              markdown={page.excerpt.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, "***$1***")}
+              metadata={
+                <List.Item.Detail.Metadata>
+                  <List.Item.Detail.Metadata.Label title="Title" text={page.title.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, "$1")} />
+                  <List.Item.Detail.Metadata.Label title="Space" text={page.resultGlobalContainer?.title} />
+                  <List.Item.Detail.Metadata.Label title="Last Modified" text={new Date(page.lastModified).toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'})} />
+                </List.Item.Detail.Metadata>
+              }
+            />
+          }
           actions={
             <ActionPanel>
               <Action.OpenInBrowser url={`https://${preferences.confluenceDomain}/wiki${page.url}`} />
-              <Action.CopyToClipboard content={page.title} />
+              <Action.CopyToClipboard content={`https://${preferences.confluenceDomain}/wiki${page.url}`} />
             </ActionPanel>
           }
         />
