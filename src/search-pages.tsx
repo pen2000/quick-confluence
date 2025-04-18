@@ -4,6 +4,7 @@ import { searchPages, getSpaces } from "./api";
 import { Preferences, ConfluenceSpace } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
 import { usePromise } from "@raycast/utils";
+import { replaceHighlightTags, formatDateToJST } from "./utils";
 
 const DEBOUNCE_TIME_MS = 400;
 
@@ -80,15 +81,15 @@ export default function Command() {
       {data?.map((page, index) => (
         <List.Item
           key={`${page.content.id}-${index}`}
-          title={page.title.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, "$1")}
+          title={replaceHighlightTags(page.title, "$1")}
           detail={
             <List.Item.Detail
-              markdown={page.excerpt.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, "***$1***")}
+              markdown={replaceHighlightTags(page.excerpt, "**$1**")}
               metadata={
                 <List.Item.Detail.Metadata>
-                  <List.Item.Detail.Metadata.Label title="Title" text={page.title.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, "$1")} />
+                  <List.Item.Detail.Metadata.Label title="Title" text={replaceHighlightTags(page.title, "$1")} />
                   <List.Item.Detail.Metadata.Label title="Space" text={page.resultGlobalContainer?.title} />
-                  <List.Item.Detail.Metadata.Label title="Last Modified" text={new Date(page.lastModified).toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'})} />
+                  <List.Item.Detail.Metadata.Label title="Last Modified" text={formatDateToJST(page.lastModified)} />
                 </List.Item.Detail.Metadata>
               }
             />
