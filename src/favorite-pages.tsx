@@ -1,7 +1,7 @@
 import { ActionPanel, Action, List, getPreferenceValues } from "@raycast/api";
 import { Preferences } from "./types";
-import { generateConfluenceUrl } from "./utils";
 import { useFavoritePages } from "./hooks/useFavoritePages";
+import { generateConfluenceUrl } from "./utils/url";
 
 export default function Command() {
   const preferences = getPreferenceValues<Preferences>();

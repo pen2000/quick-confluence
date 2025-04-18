@@ -1,7 +1,7 @@
 import { usePromise } from "@raycast/utils";
 import { showToast, Toast } from "@raycast/api";
 import { searchPages } from "../api";
-import { getNextCursor } from "../utils";
+import { getNextCursor } from "../utils/url";
 
 const SEARCH_PAGES_LIMIT = 25;
 
@@ -12,10 +12,13 @@ export function useSearchPages(searchText: string, spaceKey: string) {
         if (!searchText) {
           return { data: [], hasMore: false };
         }
+        let cql = `text ~ "${searchText}" and type = page`
+        if (spaceKey) {
+          cql += ` and space = "${spaceKey}"`
+        }
         try {
           const response = await searchPages({
-            query: searchText,
-            spaceKey: spaceKey || undefined,
+            cql: cql,
             cursor: cursor,
             limit: SEARCH_PAGES_LIMIT,
             excerpt: "highlight",

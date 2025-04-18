@@ -39,8 +39,7 @@ class ConfluenceClient {
    * Confluenceのページを検索します。
    *
    * @param options - 検索オプション
-   * @param options.query - 検索クエリ文字列
-   * @param options.spaceKey - 検索対象のスペースキー（オプション）
+   * @param options.cql - CQLクエリ文字列
    * @param options.cursor - ページネーション用のカーソル（オプション）
    * @param options.limit - 1ページあたりの取得件数（オプション）
    * @param options.excerpt - 検索結果のハイライト表示設定（オプション）
@@ -48,23 +47,17 @@ class ConfluenceClient {
    * @throws {Error} APIリクエストが失敗した場合
    */
   async searchPages({
-    query,
-    spaceKey,
+    cql,
     cursor,
     limit,
     excerpt,
   }: {
-    query: string;
-    spaceKey?: string;
+    cql: string;
     cursor?: string;
     limit?: number;
     excerpt?: string;
   }): Promise<ConfluenceSearchResponse> {
-    const cqlParams = [`text ~ "${query}"`, `type = page`, ...(spaceKey ? [`space = "${spaceKey}"`] : [])];
-    const cql = cqlParams.join(" and ");
-    const params = new URLSearchParams({
-      cql,
-    });
+    const params = new URLSearchParams({ cql });
     if (limit) {
       params.append("limit", limit.toString());
     }
@@ -116,45 +109,9 @@ class ConfluenceClient {
 
     return this.request<ConfluenceSpacesResponse>("GET", "/api/v2/spaces", params);
   }
-
-  /**
-   * お気に入りページを取得します。
-   *
-   * @param options - 取得オプション
-   * @param options.cursor - ページネーション用のカーソル（オプション）
-   * @param options.limit - 1ページあたりの取得件数（オプション）
-   * @returns お気に入りページ一覧を含むConfluenceSearchResponseオブジェクト
-   * @throws {Error} APIリクエストが失敗した場合
-   */
-  async getFavoritePages({
-    cursor,
-    limit,
-    excerpt,
-  }: {
-    cursor?: string;
-    limit?: number;
-    excerpt?: string;
-  } = {}): Promise<ConfluenceSearchResponse> {
-    const cql = "favourite = currentUser() and type = page order by created desc, title";
-    const params = new URLSearchParams({
-      cql,
-    });
-    if (limit) {
-      params.append("limit", limit.toString());
-    }
-    if (cursor) {
-      params.append("cursor", cursor);
-    }
-    if (excerpt) {
-      params.append("excerpt", excerpt);
-    }
-
-    return this.request<ConfluenceSearchResponse>("GET", "/rest/api/search", params);
-  }
 }
 
 const confluenceClient = new ConfluenceClient();
 
 export const searchPages = confluenceClient.searchPages.bind(confluenceClient);
 export const getSpaces = confluenceClient.getSpaces.bind(confluenceClient);
-export const getFavoritePages = confluenceClient.getFavoritePages.bind(confluenceClient);

@@ -1,7 +1,7 @@
 import { usePromise } from "@raycast/utils";
 import { showToast, Toast } from "@raycast/api";
-import { getFavoritePages } from "../api";
-import { getNextCursor } from "../utils";
+import { searchPages } from "../api";
+import { getNextCursor } from "../utils/url";
 
 const FAVORITE_PAGES_LIMIT = 25;
 
@@ -10,7 +10,8 @@ export function useFavoritePages() {
     () =>
       async ({ cursor }: { cursor?: string }) => {
         try {
-          const response = await getFavoritePages({
+          const response = await searchPages({
+            cql: "favourite = currentUser() and type = page order by created desc, title",
             cursor: cursor,
             limit: FAVORITE_PAGES_LIMIT,
             excerpt: "none",

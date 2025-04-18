@@ -4,7 +4,9 @@ import { Preferences } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
 import { useSpaces } from "./hooks/useSpaces";
 import { useSearchPages } from "./hooks/useSearchPages";
-import { replaceHighlightTags, formatDateToJST, generateConfluenceUrl } from "./utils";
+import { replaceHighlightTags } from "./utils/text";
+import { formatDateToJST } from "./utils/date";
+import { generateConfluenceUrl } from "./utils/url";
 
 const SEARCH_DEBOUNCE_TIME_MS = 400;
 
