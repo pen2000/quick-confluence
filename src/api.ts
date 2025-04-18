@@ -2,6 +2,10 @@ import axios, { AxiosInstance } from "axios";
 import { getPreferenceValues } from "@raycast/api";
 import { ConfluenceSearchResponse, ConfluenceSpacesResponse, Preferences } from "./types";
 
+export type ExcerptType = "highlight" | "indexed" | "none" | "highlight_unescaped" | "indexed_unescaped";
+export type SpaceType = "global" | "collaboration" | "knowledge_base" | "personal";
+export type SpaceStatus = "current" | "archived";
+
 class ConfluenceClient {
   private client: AxiosInstance;
   private preferences: Preferences;
@@ -39,8 +43,7 @@ class ConfluenceClient {
    * Confluenceのページを検索します。
    *
    * @param options - 検索オプション
-   * @param options.query - 検索クエリ文字列
-   * @param options.spaceKey - 検索対象のスペースキー（オプション）
+   * @param options.cql - CQLクエリ文字列
    * @param options.cursor - ページネーション用のカーソル（オプション）
    * @param options.limit - 1ページあたりの取得件数（オプション）
    * @param options.excerpt - 検索結果のハイライト表示設定（オプション）
@@ -48,29 +51,25 @@ class ConfluenceClient {
    * @throws {Error} APIリクエストが失敗した場合
    */
   async searchPages({
-    query,
-    spaceKey,
+    cql,
     cursor,
     limit,
-    excerpt = "highlight",
+    excerpt,
   }: {
-    query: string;
-    spaceKey?: string;
+    cql: string;
     cursor?: string;
     limit?: number;
-    excerpt?: string;
+    excerpt?: ExcerptType;
   }): Promise<ConfluenceSearchResponse> {
-    const cqlParams = [`text ~ "${query}"`, `type = page`, ...(spaceKey ? [`space = "${spaceKey}"`] : [])];
-    const cql = cqlParams.join(" AND ");
-    const params = new URLSearchParams({
-      cql,
-      excerpt,
-    });
+    const params = new URLSearchParams({ cql });
     if (limit) {
       params.append("limit", limit.toString());
     }
     if (cursor) {
       params.append("cursor", cursor);
+    }
+    if (excerpt) {
+      params.append("excerpt", excerpt);
     }
 
     return this.request<ConfluenceSearchResponse>("GET", "/rest/api/search", params);
@@ -95,8 +94,8 @@ class ConfluenceClient {
   }: {
     cursor?: string;
     limit?: number;
-    type?: string;
-    status?: string;
+    type?: SpaceType;
+    status?: SpaceStatus;
   } = {}): Promise<ConfluenceSpacesResponse> {
     const params = new URLSearchParams();
     if (type) {

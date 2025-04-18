@@ -12,6 +12,12 @@
       "title": "Search Pages",
       "description": "Confluenceのページを検索できます。",
       "mode": "view"
+    },
+    {
+      "name": "favorite-pages",
+      "title": "Favorite Pages",
+      "description": "お気に入りページを表示します。",
+      "mode": "view"
     }
   ],
   "preferences": [
