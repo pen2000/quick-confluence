@@ -4,7 +4,7 @@ import { Preferences } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
 import { useSpaces } from "./hooks/useSpaces";
 import { useSearchPages } from "./hooks/useSearchPages";
-import { replaceHighlightTags, formatDateToJST } from "./utils";
+import { replaceHighlightTags, formatDateToJST, generateConfluenceUrl } from "./utils";
 
 const SEARCH_DEBOUNCE_TIME_MS = 400;
 
@@ -14,8 +14,8 @@ export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
 
   const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_TIME_MS);
-  const { spaces, isLoading: isLoadingSpaces } = useSpaces();
-  const { isLoading: isLoadingPages, data, pagination } = useSearchPages(debouncedSearchText, selectedSpace);
+  const { data: spaces = [], isLoading: isLoadingSpaces } = useSpaces();
+  const { data: pages = [], isLoading: isLoadingPages, pagination } = useSearchPages(debouncedSearchText, selectedSpace);
 
   return (
     <List
@@ -33,14 +33,13 @@ export default function Command() {
       pagination={pagination}
       isShowingDetail
     >
-      {data?.map((page, index) => (
+      {pages?.map((page, index) => (
         <List.Item
           key={`${page.content.id}-${index}`}
           title={replaceHighlightTags(page.title, "$1")}
           detail={
             <List.Item.Detail
-              // markdown={replaceHighlightTags(page.excerpt, "**$1**")}
-              markdown={page.excerpt}
+              markdown={replaceHighlightTags(page.excerpt, "**$1**")}
               metadata={
                 <List.Item.Detail.Metadata>
                   <List.Item.Detail.Metadata.Label title="タイトル" text={replaceHighlightTags(page.title, "$1")} />
@@ -52,8 +51,8 @@ export default function Command() {
           }
           actions={
             <ActionPanel>
-              <Action.OpenInBrowser url={`https://${preferences.confluenceDomain}/wiki${page.url}`} />
-              <Action.CopyToClipboard content={`https://${preferences.confluenceDomain}/wiki${page.url}`} />
+              <Action.OpenInBrowser url={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
+              <Action.CopyToClipboard content={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
             </ActionPanel>
           }
         />

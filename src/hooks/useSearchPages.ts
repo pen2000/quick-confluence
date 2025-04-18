@@ -38,4 +38,4 @@ export function useSearchPages(searchText: string, spaceKey: string) {
       },
     [searchText, spaceKey],
   );
-} 
+}

@@ -14,5 +14,15 @@ export const replaceHighlightTags = (text: string, replacement: string): string 
  * @returns 日本時間でフォーマットされた日付文字列
  */
 export const formatDateToJST = (date: string | Date): string => {
-  return new Date(date).toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'});
+  return new Date(date).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+};
+
+/**
+ * ConfluenceページのURLを生成します
+ * @param domain - Confluenceのドメイン
+ * @param pageUrl - ページのURLパス
+ * @returns 完全なConfluenceページのURL
+ */
+export const generateConfluenceUrl = (domain: string, pageUrl: string): string => {
+  return `https://${domain}/wiki${pageUrl}`;
 };

@@ -37,7 +37,7 @@ class ConfluenceClient {
 
   /**
    * Confluenceのページを検索します。
-   * 
+   *
    * @param options - 検索オプション
    * @param options.query - 検索クエリ文字列
    * @param options.spaceKey - 検索対象のスペースキー（オプション）
@@ -78,7 +78,7 @@ class ConfluenceClient {
 
   /**
    * Confluenceのスペース一覧を取得します。
-   * 
+   *
    * @param options - 取得オプション
    * @param options.cursor - ページネーション用のカーソル（オプション）
    * @param options.limit - 1ページあたりの取得件数（オプション）
