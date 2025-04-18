@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "quick-confluence",
   "title": "QuickConfluence",
-  "description": "",
+  "description": "Raycast上でConfluenceを素早く操作できる拡張機能です。",
   "icon": "icon.png",
   "author": "pen2000",
   "license": "MIT",
@@ -10,7 +10,7 @@
     {
       "name": "search-pages",
       "title": "Search Pages",
-      "description": "",
+      "description": "Confluenceのページを検索できます。",
       "mode": "view"
     }
   ],
@@ -19,7 +19,7 @@
       "name": "confluenceDomain",
       "title": "Confluence Domain",
       "required": true,
-      "description": "The domain of your Confluence instance",
+      "description": "Confluenceのドメインを入力してください。",
       "type": "textfield",
       "placeholder": "hogehoge.atlassian.net"
     },
@@ -27,7 +27,7 @@
       "name": "confluenceEmail",
       "title": "Confluence Email",
       "required": true,
-      "description": "Your email address for Confluence",
+      "description": "Confluenceのメールアドレスを入力してください。",
       "type": "textfield",
       "placeholder": "hogehoge@example.com"
     },
@@ -35,7 +35,7 @@
       "name": "confluenceApiToken",
       "title": "Confluence API Token",
       "required": true,
-      "description": "Your API token for Confluence",
+      "description": "ConfluenceのAPIトークンを入力してください。",
       "type": "password"
     } 
   ],
