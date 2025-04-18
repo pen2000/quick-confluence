@@ -2,6 +2,10 @@ import axios, { AxiosInstance } from "axios";
 import { getPreferenceValues } from "@raycast/api";
 import { ConfluenceSearchResponse, ConfluenceSpacesResponse, Preferences } from "./types";
 
+export type ExcerptType = "highlight" | "indexed" | "none" | "highlight_unescaped" | "indexed_unescaped";
+export type SpaceType = "global" | "collaboration" | "knowledge_base" | "personal";
+export type SpaceStatus = "current" | "archived";
+
 class ConfluenceClient {
   private client: AxiosInstance;
   private preferences: Preferences;
@@ -55,7 +59,7 @@ class ConfluenceClient {
     cql: string;
     cursor?: string;
     limit?: number;
-    excerpt?: string;
+    excerpt?: ExcerptType;
   }): Promise<ConfluenceSearchResponse> {
     const params = new URLSearchParams({ cql });
     if (limit) {
@@ -90,8 +94,8 @@ class ConfluenceClient {
   }: {
     cursor?: string;
     limit?: number;
-    type?: string;
-    status?: string;
+    type?: SpaceType;
+    status?: SpaceStatus;
   } = {}): Promise<ConfluenceSpacesResponse> {
     const params = new URLSearchParams();
     if (type) {
