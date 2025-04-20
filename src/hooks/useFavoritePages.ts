@@ -3,7 +3,7 @@ import { showToast, Toast } from "@raycast/api";
 import { searchPages } from "../api";
 import { getNextCursor } from "../utils/url";
 
-const FAVORITE_PAGES_LIMIT = 25;
+const FAVORITE_PAGES_LIMIT = 200;
 
 export function useFavoritePages() {
   return usePromise(
