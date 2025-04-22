@@ -1,4 +1,4 @@
-import { ActionPanel, Action, List, getPreferenceValues, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, List, getPreferenceValues, showToast, Toast, useNavigation } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { Preferences } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
@@ -13,6 +13,7 @@ import { PageDetail } from "./components/PageDetail";
 const SEARCH_DEBOUNCE_TIME_MS = 400;
 
 export default function Command() {
+  const { push } = useNavigation();
   const preferences = getPreferenceValues<Preferences>();
   const [searchText, setSearchText] = useState("");
   const [selectedSpace, setSelectedSpace] = useState<string>("");
@@ -42,7 +43,7 @@ export default function Command() {
   }, [isLoadingFavoriteSpaces, isLoadingNonFavoriteSpaces]);
 
   if (selectedPageId) {
-    return <PageDetail pageId={selectedPageId} onBack={() => setSelectedPageId("")} />;
+    return <PageDetail pageId={selectedPageId} />;
   }
 
   return (
@@ -84,10 +85,7 @@ export default function Command() {
           }
           actions={
             <ActionPanel>
-              <Action
-                title="詳細を表示"
-                onAction={() => setSelectedPageId(page.content.id)}
-              />
+              <Action title="詳細を表示" onAction={() => push(<PageDetail pageId={page.content.id} />)} />
               <Action.OpenInBrowser url={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
               <Action.CopyToClipboard content={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
             </ActionPanel>

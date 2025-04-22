@@ -1,4 +1,4 @@
-import { Detail, ActionPanel, Action } from "@raycast/api";
+import { Detail, ActionPanel, Action, useNavigation } from "@raycast/api";
 import { usePageDetail } from "../hooks/usePageDetail";
 import { generateConfluenceUrl, generateProfilePictureUrl } from "../utils/url";
 import { getPreferenceValues } from "@raycast/api";
@@ -7,10 +7,9 @@ import { formatDateToJST } from "../utils/date";
 
 interface PageDetailProps {
   pageId: string;
-  onBack: () => void;
 }
 
-export function PageDetail({ pageId, onBack }: PageDetailProps) {
+export function PageDetail({ pageId }: PageDetailProps) {
   const preferences = getPreferenceValues<Preferences>();
   const { pageDetail, isLoading } = usePageDetail(pageId);
 
@@ -33,19 +32,32 @@ ${pageDetail.body?.storage?.value || "コンテンツがありません。"}
       metadata={
         <Detail.Metadata>
           <Detail.Metadata.Label title="スペース" text={pageDetail.space?.name} />
-          <Detail.Metadata.Label title="作成者" text={pageDetail.history?.createdBy?.displayName} icon={generateProfilePictureUrl(preferences.confluenceDomain, pageDetail.history?.createdBy?.profilePicture?.path)} />
+          <Detail.Metadata.Label
+            title="作成者"
+            text={pageDetail.history?.createdBy?.displayName}
+            icon={generateProfilePictureUrl(
+              preferences.confluenceDomain,
+              pageDetail.history?.createdBy?.profilePicture?.path,
+            )}
+          />
           <Detail.Metadata.Label title="作成日" text={formatDateToJST(pageDetail.history?.createdDate)} />
-          <Detail.Metadata.Label title="最終更新者" text={pageDetail.history?.lastUpdated?.by?.displayName} icon={generateProfilePictureUrl(preferences.confluenceDomain, pageDetail.history?.lastUpdated?.by?.profilePicture?.path)} />
+          <Detail.Metadata.Label
+            title="最終更新者"
+            text={pageDetail.history?.lastUpdated?.by?.displayName}
+            icon={generateProfilePictureUrl(
+              preferences.confluenceDomain,
+              pageDetail.history?.lastUpdated?.by?.profilePicture?.path,
+            )}
+          />
           <Detail.Metadata.Label title="最終更新日" text={formatDateToJST(pageDetail.history?.lastUpdated?.when)} />
         </Detail.Metadata>
       }
       actions={
         <ActionPanel>
-          <Action title="戻る" onAction={onBack} />
           <Action.OpenInBrowser url={generateConfluenceUrl(preferences.confluenceDomain, pageDetail._links?.webui)} />
           <Action.CopyToClipboard content={generateConfluenceUrl(preferences.confluenceDomain, pageDetail._links?.webui)} />
         </ActionPanel>
       }
     />
   );
-} 
+}
