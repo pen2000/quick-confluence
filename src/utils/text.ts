@@ -5,5 +5,6 @@
  * @returns ハイライトタグが置換されたテキスト
  */
 export const replaceHighlightTags = (text: string, replacement: string): string => {
-  return text.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, replacement);
+  const cleanedText = text.replace(/@@@endhl@@@@@@hl@@@/g, "");
+  return cleanedText.replace(/@@@hl@@@(.*?)@@@endhl@@@/g, replacement);
 };
