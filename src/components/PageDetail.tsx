@@ -53,7 +53,9 @@ export function PageDetail({ pageId }: PageDetailProps) {
           />
           <Detail.Metadata.Label title="最終更新日" text={formatDateToJST(pageDetail.history?.lastUpdated?.when)} />
           <Detail.Metadata.TagList title="ラベル">
-            {pageDetail.metadata?.labels?.results?.map((label: any) => <Detail.Metadata.TagList.Item text={label.label} />)}
+            {pageDetail.metadata?.labels?.results?.map((label: any) => (
+              <Detail.Metadata.TagList.Item key={label.id} text={label.label} />
+            ))}
           </Detail.Metadata.TagList>
         </Detail.Metadata>
       }
