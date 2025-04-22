@@ -2,11 +2,12 @@ import { ActionPanel, Action, List, getPreferenceValues } from "@raycast/api";
 import { useState } from "react";
 import { Preferences } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
-import { useSpaces } from "./hooks/useSpaces";
 import { useSearchPages } from "./hooks/useSearchPages";
 import { replaceHighlightTags } from "./utils/text";
 import { formatDateToJST } from "./utils/date";
 import { generateConfluenceUrl } from "./utils/url";
+import { useFavoriteSpaces } from "./hooks/useFavoriteSpaces";
+import { useNonFavoriteSpaces } from "./hooks/useNonFavoriteSpaces";
 
 const SEARCH_DEBOUNCE_TIME_MS = 400;
 
@@ -16,18 +17,24 @@ export default function Command() {
   const [selectedSpace, setSelectedSpace] = useState<string>("");
 
   const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_TIME_MS);
-  const { data: spaces = [], isLoading: isLoadingSpaces } = useSpaces();
+  const { data: favoriteSpaces = [], isLoading: isLoadingFavoriteSpaces } = useFavoriteSpaces();
+  const { data: nonFavoriteSpaces = [], isLoading: isLoadingNonFavoriteSpaces } = useNonFavoriteSpaces();
   const { data: pages = [], isLoading: isLoadingPages, pagination } = useSearchPages(debouncedSearchText, selectedSpace);
 
   return (
     <List
-      isLoading={isLoadingSpaces || isLoadingPages}
+      isLoading={isLoadingFavoriteSpaces || isLoadingNonFavoriteSpaces || isLoadingPages}
       onSearchTextChange={setSearchText}
       searchBarPlaceholder="Confluenceページを検索..."
       searchBarAccessory={
         <List.Dropdown tooltip="スペースを選択" value={selectedSpace} onChange={setSelectedSpace}>
           <List.Dropdown.Item title="すべてのスペース" value="" />
-          {spaces.map((space) => (
+          <List.Dropdown.Section title="★Favorites">
+            {favoriteSpaces.map((space) => (
+              <List.Dropdown.Item key={space.id} title={space.name} value={space.key} />
+            ))}
+          </List.Dropdown.Section>
+          {nonFavoriteSpaces.map((space) => (
             <List.Dropdown.Item key={space.id} title={space.name} value={space.key} />
           ))}
         </List.Dropdown>

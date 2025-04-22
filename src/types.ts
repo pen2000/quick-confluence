@@ -101,6 +101,7 @@ export interface ConfluenceSpace {
   name: string;
   type: string;
   status: string;
+  isFavorite?: boolean;
 }
 
 export interface ConfluenceSearchResponse {

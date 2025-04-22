@@ -91,11 +91,13 @@ class ConfluenceClient {
     limit,
     type,
     status,
+    myFavorite,
   }: {
     cursor?: string;
     limit?: number;
     type?: SpaceType;
     status?: SpaceStatus;
+    myFavorite?: boolean;
   } = {}): Promise<ConfluenceSpacesResponse> {
     const params = new URLSearchParams();
     if (type) {
@@ -110,8 +112,11 @@ class ConfluenceClient {
     if (cursor) {
       params.append("cursor", cursor);
     }
-
-    return this.request<ConfluenceSpacesResponse>("GET", "/api/v2/spaces", params);
+    if (myFavorite !== undefined) {
+      params.append("favourite", myFavorite.toString());
+      params.append("favouriteUserKey", "currentUser()");
+    }
+    return this.request<ConfluenceSpacesResponse>("GET", "rest/api/space", params);
   }
 }
 
