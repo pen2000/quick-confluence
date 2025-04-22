@@ -8,6 +8,7 @@ import { formatDateToJST } from "./utils/date";
 import { generateConfluenceUrl } from "./utils/url";
 import { useFavoriteSpaces } from "./hooks/useFavoriteSpaces";
 import { useNonFavoriteSpaces } from "./hooks/useNonFavoriteSpaces";
+import { PageDetail } from "./components/PageDetail";
 
 const SEARCH_DEBOUNCE_TIME_MS = 400;
 
@@ -15,6 +16,7 @@ export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
   const [searchText, setSearchText] = useState("");
   const [selectedSpace, setSelectedSpace] = useState<string>("");
+  const [selectedPageId, setSelectedPageId] = useState<string>("");
   const [toast, setToast] = useState<Toast | null>(null);
 
   const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_TIME_MS);
@@ -38,6 +40,10 @@ export default function Command() {
 
     showLoadingToast();
   }, [isLoadingFavoriteSpaces, isLoadingNonFavoriteSpaces]);
+
+  if (selectedPageId) {
+    return <PageDetail pageId={selectedPageId} onBack={() => setSelectedPageId("")} />;
+  }
 
   return (
     <List
@@ -78,6 +84,10 @@ export default function Command() {
           }
           actions={
             <ActionPanel>
+              <Action
+                title="詳細を表示"
+                onAction={() => setSelectedPageId(page.content.id)}
+              />
               <Action.OpenInBrowser url={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
               <Action.CopyToClipboard content={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
             </ActionPanel>

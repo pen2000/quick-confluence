@@ -9,6 +9,16 @@ export const generateConfluenceUrl = (domain: string, pageUrl: string): string =
 };
 
 /**
+ * Confluenceのプロフィール画像のURLを生成します
+ * @param domain - Confluenceのドメイン
+ * @param path - プロフィール画像のパス
+ * @returns プロフィール画像のURL
+ */
+export const generateProfilePictureUrl = (domain: string, path: string): string => {
+  return `https://${domain}${path}`;
+};
+
+/**
  * 次のページのcursorを取得します
  * @param nextUrl - 次のページのURL
  * @returns 次のページのcursor、存在しない場合はundefined

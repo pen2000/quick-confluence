@@ -118,9 +118,26 @@ class ConfluenceClient {
     }
     return this.request<ConfluenceSpacesResponse>("GET", "rest/api/space", params);
   }
+
+  /**
+   * Confluenceのページ詳細を取得します。
+   *
+   * @param pageId - ページID
+   * @param expand - 取得する関連情報（カンマ区切り、オプション）
+   * @returns ページ詳細情報
+   * @throws {Error} APIリクエストが失敗した場合
+   */
+  async getPageDetail(pageId: string, expand?: string) {
+    const params = new URLSearchParams();
+    if (expand) {
+      params.append("expand", expand);
+    }
+    return this.request<any>("GET", `/rest/api/content/${pageId}`, params);
+  }
 }
 
 const confluenceClient = new ConfluenceClient();
 
 export const searchPages = confluenceClient.searchPages.bind(confluenceClient);
 export const getSpaces = confluenceClient.getSpaces.bind(confluenceClient);
+export const getPageDetail = confluenceClient.getPageDetail.bind(confluenceClient);
