@@ -22,7 +22,9 @@ export function PageDetail({ pageId }: PageDetailProps) {
   }
 
   const markdown = `
-${pageDetail.body?.storage?.value || "コンテンツがありません。"}
+  # ${pageDetail.title}
+  ---
+  ${pageDetail.body?.storage?.markdown}
   `;
 
   return (
@@ -50,6 +52,9 @@ ${pageDetail.body?.storage?.value || "コンテンツがありません。"}
             )}
           />
           <Detail.Metadata.Label title="最終更新日" text={formatDateToJST(pageDetail.history?.lastUpdated?.when)} />
+          <Detail.Metadata.TagList title="ラベル">
+            {pageDetail.metadata?.labels?.results?.map((label: any) => <Detail.Metadata.TagList.Item text={label.label} />)}
+          </Detail.Metadata.TagList>
         </Detail.Metadata>
       }
       actions={

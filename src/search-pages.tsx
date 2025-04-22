@@ -1,4 +1,4 @@
-import { ActionPanel, Action, List, getPreferenceValues, showToast, Toast, useNavigation } from "@raycast/api";
+import { ActionPanel, Action, List, getPreferenceValues, showToast, Toast, useNavigation, Icon } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { Preferences } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
@@ -85,9 +85,9 @@ export default function Command() {
           }
           actions={
             <ActionPanel>
-              <Action title="詳細を表示" onAction={() => push(<PageDetail pageId={page.content.id} />)} />
-              <Action.OpenInBrowser url={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
-              <Action.CopyToClipboard content={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
+              <Action title="詳細を表示" onAction={() => push(<PageDetail pageId={page.content.id} />)} icon={Icon.Paragraph} />
+              <Action.OpenInBrowser title="ブラウザで開く" url={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
+              <Action.CopyToClipboard title="URLをコピー" content={generateConfluenceUrl(preferences.confluenceDomain, page.url)} />
             </ActionPanel>
           }
         />
