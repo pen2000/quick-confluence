@@ -1,5 +1,5 @@
-import { ActionPanel, Action, List, getPreferenceValues } from "@raycast/api";
-import { useState } from "react";
+import { ActionPanel, Action, List, getPreferenceValues, showToast, Toast } from "@raycast/api";
+import { useState, useEffect } from "react";
 import { Preferences } from "./types";
 import { useDebounce } from "./hooks/useDebounce";
 import { useSearchPages } from "./hooks/useSearchPages";
@@ -15,11 +15,29 @@ export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
   const [searchText, setSearchText] = useState("");
   const [selectedSpace, setSelectedSpace] = useState<string>("");
+  const [toast, setToast] = useState<Toast | null>(null);
 
   const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_TIME_MS);
   const { data: favoriteSpaces = [], isLoading: isLoadingFavoriteSpaces } = useFavoriteSpaces();
   const { data: nonFavoriteSpaces = [], isLoading: isLoadingNonFavoriteSpaces } = useNonFavoriteSpaces();
   const { data: pages = [], isLoading: isLoadingPages, pagination } = useSearchPages(debouncedSearchText, selectedSpace);
+
+  useEffect(() => {
+    const showLoadingToast = async () => {
+      if (isLoadingFavoriteSpaces || isLoadingNonFavoriteSpaces) {
+        const newToast = await showToast({
+          style: Toast.Style.Animated,
+          title: "スペース情報を読み込み中...",
+        });
+        setToast(newToast);
+      } else if (toast) {
+        toast.hide();
+        setToast(null);
+      }
+    };
+
+    showLoadingToast();
+  }, [isLoadingFavoriteSpaces, isLoadingNonFavoriteSpaces]);
 
   return (
     <List
